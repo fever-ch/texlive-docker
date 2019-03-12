@@ -1,37 +1,18 @@
 #!/bin/bash
 export YEAR=$1
+export SCHEME=$2
 export TERM=xterm
 
 echo "Installing TeXlive $YEAR"
 
-mv /usr/bin/wget /usr/bin/wget.orig
+wget -o /dev/stdout -c ftp://tug.org/historic/systems/texlive/$YEAR/tlnet-final/install-tl-unx.tar.gz || exit -1
 
-echo -e "#/bin/bash\n/usr/bin/wget.orig \"\$@\" || (sleep 5; /usr/bin/wget \"\$@\")" > /usr/bin/wget
+mkdir /install-tl-unx
 
-chmod +x /usr/bin/wget
+tar xvfz install-tl-unx.tar.gz -C /install-tl-unx --strip-components=1
 
-if (( $YEAR < 2018 )); then
-	wget -o /dev/stdout -c ftp://tug.org/historic/systems/texlive/$YEAR/tlnet-final/install-tl.zip || exit -1
+echo -e "selected_scheme scheme-$SCHEME\ntlpdbopt_sys_bin /usr/local/bin\ntlpdbopt_sys_info /usr/local/info\ntlpdbopt_sys_man /usr/local/man" >> /install-tl-unx/texlive.profile
 
-	unzip install-tl.zip
+/install-tl-unx/install-tl -profile /install-tl-unx/texlive.profile -repository ftp://tug.org/historic/systems/texlive/$YEAR/tlnet-final
 
-	rm install-tl.zip
-else
-	wget -o /dev/stdout -c ftp://tug.org/historic/systems/texlive/$YEAR/install-tl-unx.tar.gz || exit -1
-
-	tar xvfz install-tl-unx.tar.gz
-	
-	rm install-tl-unx.tar.gz
-fi;
-
-cd install-tl-*
-if (( $YEAR < 2018 )); then
-	echo -e "O\nL\n\n\n\nR\nI\n" | ./install-tl -repository ftp://tug.org/historic/systems/texlive/$YEAR/tlnet-final || exit -1
-else
-	echo -e "O\nL\n\n\n\nR\nI\n" | ./install-tl || exit -1
-fi;	
-
-cd .. ; rm -rf install-tl-*
-
-rm cat /usr/bin/wget
-mv cat /usr/bin/wget.orig cat /usr/bin/wget
+rm -rf /install-tl-unx
