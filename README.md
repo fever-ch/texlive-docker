@@ -8,7 +8,7 @@ These Docker images contain full versions of TeX Live and are tagged according t
 
 These images allow you to work with a specific version of LaTeX (i.e., the one used by your teammates) without having to install this version on your system.
 
-Images are based on the install scheme `tetex`, but other variants (such that `small`, `medium`, ...) can easily be built using 
+Images are based on the install scheme `full`, but other variants (such that `small`, `basic`, `medium`, `tetex`, ...) can easily be built using custom `Dockerfile`.
 
 ## Available versions
 * 2018
